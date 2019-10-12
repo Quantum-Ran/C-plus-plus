@@ -1,55 +1,4 @@
-链表的难点在于指针
-
-而 python 没有"指针"，取代的是"引用"。
-
-将某个变量赋值给指针，实际上就是将这个变量的地址赋值给指针，或者反过来说，指针中存储了这个变量的内存地址，指向了这个变量，通过指针就能找到这个变量。
-
-`p->next=q`——p 结点的 next 指针存储了 p 结点的下下一个结点的内存地址
-
-`p->next=p->next->next`——p 结点的 next 指针存储了 p 结点的**下下**一个结点的内存地址。
-
-```c
-// 在数组 a 中，查找 key，返回 key 所在的位置
-// 其中，n 表示数组 a 的长度
-int find(char* a, int n, char key) {
-  // 边界条件处理，如果 a 为空，或者 n<=0，说明数组中没有数据，就不用 while 循环比较了
-  if(a == null || n <= 0) {
-    return -1;
-  }
-  
-  int i = 0;
-  // 这里有两个比较操作：i<n 和 a[i]==key.
-  while (i < n) {
-    if (a[i] == key) {
-      return i;
-    }
-    ++i;
-  }
-  
-  return -1;
-}
-
-```
-
-![b93e7ade9bb927baad1348d9a806ddeb](如何轻松写出正确的链表代码？.assets/b93e7ade9bb927baad1348d9a806ddeb.jpg)
-
-
-
-```python
-class Node:
-    """
-    先构造这样一个“节点”数据结构
-    没有 node_head
-    只有 next_node 和 node_data
-    """
-
-    def __init__(self, data, node_address=None):
-        # next_node 存放的是下个节点的内存地址
-        self.next_node = node_address
-        self.node_data = data
-
-    def __str__(self):
-        return str(self.node_data)
+from SingleNode import SingleNode
 
 
 class SingleLinkedList():
@@ -62,31 +11,29 @@ class SingleLinkedList():
     """
 
     # 初始节点头部为 None
-    def __init__(self, node_head=None):
-        self.node_head = node_head
+    def __init__(self, link_head=None):
+        self.link_head = link_head
 
     # 增
     def add(self, data, index=None):
         """
         默认加入最后，如果有位置，就插入
         """
+        # 创建节点实例，投入（数据，内存地址）
+        node = SingleNode(data)
         # 如果是空的直接加
         if (self.is_empty()) or (index == 0):
-            # 创建节点实例，投入（数据，内存地址）
-            node = Node(data, self.node_head)
-            self.node_head = node
+            self.link_head = node
         elif (index is None) or (index == self.length()):
-            # 创建节点实例，不能加 node_head 会出现头和尾巴连上
-            ######
-            node = Node(data)
-            cursor = self.node_head
+            # 创建节点实例，不能加 link_head 会出现头和尾巴连上
+            # 因为只有一个头
+            cursor = self.link_head
             # 当前 node 到没有下个节点为止
             while cursor.next_node is not None:
                 cursor = cursor.next_node
             cursor.next_node = node
         elif 0 < index < self.length():
-            node = Node(data)
-            cursor = self.node_head
+            cursor = self.link_head
             # 在 index 前添加
             # 到目标位置的前一个节点停止
             for i in range(index-1):
@@ -99,7 +46,7 @@ class SingleLinkedList():
 
     # 改
     def update(self, newdata, index):
-        cursor = self.node_head
+        cursor = self.link_head
         for i in range(index-1):
             cursor = cursor.next_node
         cursor.node_data = newdata
@@ -110,7 +57,7 @@ class SingleLinkedList():
         根据索引和偏移量删除，默认偏移量为1
         """
         if self.length() >= index + offset - 1:
-            cursor = self.node_head
+            cursor = self.link_head
             for i in range(index-1):
                 cursor = cursor.next_node
             start_cursor = cursor
@@ -126,7 +73,7 @@ class SingleLinkedList():
         要想展示还是要放到一个容器中
         首先获得所有节点头部
         """
-        cursor = self.node_head
+        cursor = self.link_head
         SLL_list = []
         # 如果 游标的头部一直存放着上个节点的尾针，
         # 如果一直不为空，就添加到容器中。
@@ -141,7 +88,7 @@ class SingleLinkedList():
 
     # 为空
     def is_empty(self):
-        return self.node_head is None
+        return self.link_head is None
 
 
 s = SingleLinkedList()
@@ -158,8 +105,3 @@ print(s.search())
 s.remove(2, 5)
 print(s.search())
 print(s.length())
-
-```
-
-![1570726481917](如何轻松写出正确的链表代码？.assets/1570726481917.png)
-
